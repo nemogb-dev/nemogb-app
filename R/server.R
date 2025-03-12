@@ -1,5 +1,5 @@
 library(DT)
-library(gradebook)
+library(nemogb)
 library(tidyverse)
 library(plotly)
 library(bslib)
@@ -22,7 +22,7 @@ shinyServer(function(input, output, session) {
     observeEvent(input$upload_gs,{
         req(input$upload_gs)
         tryCatch({
-            uploaded_data <- gradebook::read_files(input$upload_gs$datapath)
+            uploaded_data <- nemogb::read_files(input$upload_gs$datapath)
             data(uploaded_data)
         }, error = function(e) {
             showNotification('Please upload a file with the Gradescope format','',type = "error")
@@ -34,11 +34,11 @@ shinyServer(function(input, output, session) {
         req(input$upload_policy)
         #eventually validate
         tryCatch({
-            yaml <- gradebook::read_policy(input$upload_policy$datapath)
+            yaml <- nemogb::read_policy(input$upload_policy$datapath)
             policy$coursewide <- yaml$coursewide
             policy$categories <- yaml$categories
             #update lateness table
-            flat_policy <- gradebook::flatten_policy(yaml)
+            flat_policy <- nemogb::flatten_policy(yaml)
             late_policies <- purrr::map(flat_policy$categories, "lateness") |>
                 discard(is.null)
             late_table <- NULL
@@ -113,7 +113,7 @@ shinyServer(function(input, output, session) {
     # creates assigns table when data uploads 
     # all assignments default to "Unassigned"
     observe({
-        colnames <- gradebook::get_assignments(data())
+        colnames <- nemogb::get_assignments(data())
         if(length(colnames) > 0){
             assign$table <- data.frame(assignment = colnames) |>
                 mutate(category = "Unassigned")
@@ -247,7 +247,7 @@ shinyServer(function(input, output, session) {
     observeEvent(input$save,{
         existingCategories <- unlist(map(policy$flat$categories, "category"))
         if (!is.null(assign$table$assignment)){
-            existingCategories <- c(existingCategories, gradebook::get_assignments(data()))
+            existingCategories <- c(existingCategories, nemogb::get_assignments(data()))
         }
         if (!is.null(current_edit$category)){
             existingCategories <- existingCategories[existingCategories != current_edit$category$category]
@@ -339,8 +339,8 @@ shinyServer(function(input, output, session) {
     
     #whenever policy$categories changes, policy$flat, assign$table and UI updates
     observe({
-        policy$flat <- list(categories = policy$categories) |> gradebook::flatten_policy()
-        assign$table <- updateAssignsTable(assign$table, gradebook::flatten_policy(list(categories = policy$categories)))
+        policy$flat <- list(categories = policy$categories) |> nemogb::flatten_policy()
+        assign$table <- updateAssignsTable(assign$table, nemogb::flatten_policy(list(categories = policy$categories)))
     })
     
     #### -------------------------- DISPLAY CATEGORIES UI ----------------------------####
@@ -759,7 +759,7 @@ shinyServer(function(input, output, session) {
                 gs <- data()
                 policy <- list(categories = policy$categories)
                 
-                final_grades <- gradebook::get_grades(gs = gs, policy = policy)
+                final_grades <- nemogb::get_grades(gs = gs, policy = policy)
                 grades(final_grades)
                 
             }, error = function(e) {
@@ -971,7 +971,7 @@ shinyServer(function(input, output, session) {
     
     available_categories <- reactive({
         #can plot any category with valid assignments/nested categories
-        policy <- gradebook::flatten_policy(list(categories = policy$categories))
+        policy <- nemogb::flatten_policy(list(categories = policy$categories))
         return(map(policy$categories, "category"))
     })
     

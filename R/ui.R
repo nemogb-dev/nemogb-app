@@ -9,7 +9,7 @@ source(paste0(UICompDirectory, "dashboard.R"), local = TRUE)
 
 shinyUI(
   dashboardPage(
-    dashboardHeader(title = "Gradebook"),
+    dashboardHeader(title = "NemoGB"),
     dashboardSidebar(
       sidebarMenu(
         tags$head(
@@ -63,7 +63,7 @@ shinyUI(
         ),
         div(class = "version-tooltip",
           icon("question-circle"),
-          div(class = "tooltiptext", paste0("Gradebook Version: ", app_version, ". Hosted by Netlify."))
+          div(class = "tooltiptext", paste0("NemoGB Version: ", app_version, ". Hosted by Netlify."))
         )
       )
     ),
