@@ -1,5 +1,5 @@
 Policies <- bs4TabItem(tabName = "policies",
-  h2("Create Policy File", style = "text-align: center;"),
+  h2("Create Policy File", class = "text-center"),
   
   ### COURSE NAME ###
   fluidRow(
@@ -12,16 +12,16 @@ Policies <- bs4TabItem(tabName = "policies",
         column(
           width = 12,
           div(
-            style = "display: flex; align-items: center;",
+            class = "d-flex align-items-center",
             div(
               textOutput("course_name_display"),
-              style = "font-size: 24px; margin-right: 10px;"
+              class = "h3 mr-2"
             ),
             actionButton("edit_policy_name", label = NULL, icon = icon("pen-to-square"))
           ),
           div(
             textOutput("course_description_display"),
-            style = "margin-top: 20px; font-size: 16px;"
+            class = "mt-3"
           )
         )
       )
@@ -61,8 +61,8 @@ Policies <- bs4TabItem(tabName = "policies",
         column(
           width = 12,
           div(
-            style = "display: flex; align-items: center;",
-            h4("Add New Lateness Policy", style = "margin-right: 10px;"),
+            class = "d-flex align-items-center mb-2",
+            h4("Add New Lateness Policy", class = "mr-2"),
             actionButton("new_lateness", label = NULL, icon = icon("plus"))
           ),
           hr()
@@ -84,8 +84,8 @@ Policies <- bs4TabItem(tabName = "policies",
         column(
           width = 12,
           div(
-            style = "display: flex; align-items: center;",
-            h4("Add New Slip Days Policy", style = "margin-right: 10px;"),
+            class = "d-flex align-items-center mb-2",
+            h4("Add New Slip Days Policy", class = "mr-2"),
             actionButton("new_slip_days", label = NULL, icon = icon("plus"))
           ),
           hr()
