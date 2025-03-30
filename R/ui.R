@@ -31,8 +31,10 @@ sidebar <- bs4DashSidebar(
       fileInput("upload_gs", "Upload Student Data", accept = c(".csv")),
       fileInput("upload_policy", "Upload Policy File", accept = c(".yml")),
       # Download controls
-      downloadButton("download_grades", "Grades"),
-      downloadButton("download_policy_file", "Policy File")
+      tags$div(class = "download-buttons-container",
+        downloadButton("download_grades", "Grades"),
+        downloadButton("download_policy_file", "Policy File")
+      )
     )
   )
 )
@@ -85,6 +87,22 @@ body <- bs4DashBody(
           margin-right: 0;      /* Remove previous margin */
           margin-bottom: 10px;
           box-sizing: border-box; /* Include padding/border in width */
+      }
+      
+      /* Container for download buttons to ensure vertical stacking */
+      .download-buttons-container {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+      }
+      
+      /* Ensure each button in the container takes full width */
+      .download-buttons-container .btn {
+          display: block;
+          width: 100%;
+          margin-bottom: 10px;
+          white-space: normal; /* Allow text to wrap */
+          word-wrap: break-word;
       }
 
       /* Ensure buttons don't change size on hover/focus */

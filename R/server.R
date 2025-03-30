@@ -942,13 +942,18 @@ shinyServer(function(input, output, session) {
         tfive <- quantile(assignment_vec, 0.25) |> round(digits = 4)
         sfive <- quantile(assignment_vec, 0.75) |> round(digits = 4)
         
-        div(
-            class = "stats-container",
-            div(class = "d-flex justify-content-between border-bottom py-1", p("Mean"), p(mu)),
-            div(class = "d-flex justify-content-between border-bottom py-1", p("Standard Deviation"), p(sd)),
-            div(class = "d-flex justify-content-between border-bottom py-1", p("Median"), p(med)),
-            div(class = "d-flex justify-content-between border-bottom py-1", p("25%ile"), p(tfive)),
-            div(class = "d-flex justify-content-between py-1", p("75%ile"), p(sfive))
+        # Create a data frame for the statistics
+        stats_df <- data.frame(
+          Statistic = c("Mean", "Standard Deviation", "Median", "25 percentile", "75 percentile"),
+          Value = c(mu, sd, med, tfive, sfive)
+        )
+        
+        # Use bs4Table to display the statistics
+        bs4Table(
+          data = stats_df,
+          striped = TRUE,
+          bordered = FALSE,
+          width = "100%"
         )
     })
     
@@ -1000,13 +1005,18 @@ shinyServer(function(input, output, session) {
             tfive <- paste0((quantile(category_vec, 0.25) |> round(digits = 4)) * 100, '%')
             sfive <- paste0((quantile(category_vec, 0.75) |> round(digits = 4)) * 100, '%')
             
-            div(
-                class = "stats-container",
-                div(class = "d-flex justify-content-between border-bottom py-1", p("Mean"), p(mu)),
-                div(class = "d-flex justify-content-between border-bottom py-1", p("Standard Deviation"), p(sd)),
-                div(class = "d-flex justify-content-between border-bottom py-1", p("Median"), p(med)),
-                div(class = "d-flex justify-content-between border-bottom py-1", p("25%ile"), p(tfive)),
-                div(class = "d-flex justify-content-between py-1", p("75%ile"), p(sfive))
+            # Create a data frame for the statistics
+            stats_df <- data.frame(
+              Statistic = c("Mean", "Standard Deviation", "Median", "25 percentile", "75 percentile"),
+              Value = c(mu, sd, med, tfive, sfive)
+            )
+            
+            # Use bs4Table to display the statistics
+            bs4Table(
+              data = stats_df,
+              striped = TRUE,
+              bordered = FALSE,
+              width = "100%"
             )
         } else {
             div(
