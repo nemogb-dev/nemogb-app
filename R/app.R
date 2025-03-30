@@ -1,5 +1,5 @@
 #load libraries
-library(shinydashboard)
+library(bs4Dash)
 library(shiny)
 library(DT)
 library(shinyWidgets)

@@ -97,7 +97,7 @@ createSlipDaysCards <- function(slip_days_table) {
             tags$strong("Assignments: "), paste(slip_days_data$assignments, collapse = ", ")
         )
         
-        box(
+        bs4Card(
             title = title,
             status = "primary",
             width = 8,
@@ -116,4 +116,3 @@ confirm_delete_slip_days <- modalDialog(
         actionButton("delete_slip_days_confirm", "Delete")
     )
 )
-

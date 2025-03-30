@@ -151,13 +151,12 @@ createLatenessCards <- function(lateness_table) {
         
         content <- do.call(tagList, content)
         
-        box(
+        bs4Card(
             #title = title,
             status = "primary",
             width = 8,
             icons,
             content
-            
         )
     })
 }

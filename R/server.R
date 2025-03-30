@@ -4,7 +4,7 @@ library(tidyverse)
 library(plotly)
 library(bslib)
 library(readr)
-library(shinydashboard)
+library(bs4Dash)
 
 #load helper scripts
 HSLocation <- "helperscripts/"
@@ -776,20 +776,23 @@ shinyServer(function(input, output, session) {
         # if categories are made OR data is uploaded.
         if (length(policy$categories) > 0 && !is.null(assign$table$assignment)) {
             fluidRow(
-                box(
-                    tabsetPanel(
-                        tabPanel('Plot', 
-                                 plotlyOutput('assignment_plotly', height = '220px')
+                bs4Card(
+                    bs4TabCard(
+                        id = "assignment_tabs",
+                        shiny::tabPanel( # Use shiny::tabPanel
+                            title = 'Plot', 
+                            plotlyOutput('assignment_plotly', height = '220px')
                         ),
-                        tabPanel('Statistics', 
-                                 # TODO
-                                 uiOutput('assignment_stats'),
-                        ),
+                        shiny::tabPanel( # Use shiny::tabPanel
+                            title = 'Statistics', 
+                            # TODO
+                            uiOutput('assignment_stats')
+                        )
                     ),
                     width = 6,
-                    height = '300px',
+                    height = '300px'
                 ),
-                box(
+                bs4Card(
                     title = 'Assignment Options',
                     selectInput('which_assignment', label=NULL, choices = assign$table$assignment),
                     # TODO: radioButtons('assignment_score_option', 'Choose an option:', 
@@ -798,22 +801,24 @@ shinyServer(function(input, output, session) {
                     #              selected = 'percentage'),
                     width = 6,
                     height = '300px'
-                    
                 ),
-                box(
-                    tabsetPanel(
-                        tabPanel('Plot', 
-                                 plotlyOutput('category_plotly', height = '220px'),
+                bs4Card(
+                    bs4TabCard(
+                        id = "category_tabs",
+                        shiny::tabPanel( # Use shiny::tabPanel
+                            title = 'Plot', 
+                            plotlyOutput('category_plotly', height = '220px')
                         ),
-                        tabPanel('Statistics', 
-                                 # TODO
-                                 uiOutput('category_stats', height = '200px'),
-                        ),
+                        shiny::tabPanel( # Use shiny::tabPanel
+                            title = 'Statistics', 
+                            # TODO
+                            uiOutput('category_stats', height = '200px')
+                        )
                     ),
                     width = 6,
                     height = '300px'
                 ),
-                box(
+                bs4Card(
                     title = 'Category Options', 
                     selectInput('which_category', label=NULL, choices = available_categories()),
                     # TODO: radioButtons('choice2', 'Choose an option:',
@@ -823,13 +828,13 @@ shinyServer(function(input, output, session) {
                     width = 6,
                     height = '300px'
                 ),
-                box(
+                bs4Card(
                     title = 'Overall Course Distribution',
                     plotlyOutput('overall_plotly', height = '320px'),
                     width = 12,
                     height = '400px'
                 ),
-                box(
+                bs4Card(
                     title = 'Student Data',
                     DT::DTOutput('course_data_table'),
                     width = 12

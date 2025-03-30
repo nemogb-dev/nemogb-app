@@ -47,6 +47,28 @@ footer <- bs4DashFooter(
 
 # Main body with tabsets - using the sourced components
 body <- bs4DashBody(
+  # # Add CSS to override white backgrounds
+  # tags$head(
+  #   tags$style(HTML("
+  #     /* Override white backgrounds in components */
+  #     .card, .tab-content, .box, .tab-pane, .card-body {
+  #       background-color: transparent !important;
+  #     }
+  #     /* Remove borders that might make white backgrounds stand out */
+  #     .card, .box {
+  #       border: none !important;
+  #       box-shadow: none !important;
+  #     }
+  #     /* Override any inline styles with !important */
+  #     [style*='background-color: #ffffff'] {
+  #       background-color: transparent !important;
+  #     }
+  #     /* Make sure text is visible against the page background */
+  #     body {
+  #       color: #333;
+  #     }
+  #   "))
+  # ),
   bs4TabItems(
     # Convert the sourced tabItems to bs4TabItems
     bs4TabItem(

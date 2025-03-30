@@ -1,99 +1,102 @@
-Policies <- tabItem(tabName = "policies",
-                    h2("Create Policy File", style = "text-align: center;"),
-                    ### COURSE NAME ###
-                    fluidRow(
-                        tagList(
-                            div(style = "margin-top: 0px; padding: 15px; background-color: #ffffff;",
-                                div(
-                                    style = "border: 1px solid #ddd; padding: 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,.1);",
-                                    tags$div(
-                                        style = "display: flex; justify-content: left; align-items: center;",
-                                        tags$div(
-                                            textOutput("course_name_display"),
-                                            style = "font-size: 24px; display: inline-block; margin-right: 10px; "
-                                        ),
-                                        actionButton("edit_policy_name", label = NULL, icon = icon("pen-to-square"), style = "margin-bottom: 10px; background-color: transparent;  color: #50A5EA;")
-                                    ),
-                                    tags$div(
-                                        textOutput("course_description_display"),
-                                        style = "margin-top: 20px; font-size: 16px;"
-                                    )
-                                )
-                            )
-                        )
-                    ),
-                    
-                    
-                    
-                    ### CATEGORIES ###
-                    tabsetPanel(
-                        ### TAB ASSIGNMENTS ###
-                        tabPanel("Categories",
-                                 fluidRow(
-                                     tagList(
-                                         div(style = "align-items: center; padding: 20px; background-color: #ffffff;",
-                                             # fluidRow(
-                                             #     h4('Course Policy', style = " align-items: center;padding-left: 30px; font-size: 24px; display: inline-block; margin-right: 10px; " ),
-                                             #     actionButton("new_cat", label = NULL, icon = icon("plus"), style = "margin-top: -5px;  background-color: transparent; margin-right: 10px; color: #50A5EA;"),
-                                             #     hr(),
-                                             # ),
-                                             fluidRow(
-                                                 column(8, 
-                                                        # h4('Policy View', style = "font-size: 24px; display: inline-block; margin-right: 10px; " ),
-                                                        br(),
-                                                        fluidRow(style = "margin-left: 10px;"),
-                                                        uiOutput("categoriesUI"),
-                                                 ),
-                                                 column(4,
-                                                        h4("New Assignments:", style = "margin-bottom: 20px;"),
-                                                        uiOutput("unassigned")
-                                                 )
-                                             )
-                                         )
-                                     )
-                                 )
-                        ),
-                        
-                        ### TAB LATENESS POLICY ###
-                        tabPanel("Lateness Policy",
-                                 fluidRow(
-                                     tagList(
-                                         div(style = "align-items: center; padding: 20px; background-color: #ffffff;",
-                                             fluidRow(
-                                                 h4('Add New Lateness Policy', style = " align-items: center;padding-left: 30px; font-size: 24px; display: inline-block; margin-right: 10px; " ),
-                                                 actionButton("new_lateness", label = NULL, icon = icon("plus"), style = "margin-top: -5px;  background-color: transparent; margin-right: 10px; color: #50A5EA;"),
-                                                 hr(),
-                                             )),
-                                     )
-                                 ),
-                                 fluidRow(
-                                    
-                                     br(),
-                                     fluidRow(style = "margin-left: 10px;"),
-                                     uiOutput("latenessUI")
-                                 
-                                 )
-                                 
-                        ),
-                        ### TAB SLIP DAYS ###
-                        tabPanel("Slip Days",
-                                 fluidRow(
-                                     tagList(
-                                         div(style = "align-items: center; padding: 20px; background-color: #ffffff;",
-                                             fluidRow(
-                                                 h4('Add New Slip Days Policy', style = " align-items: center;padding-left: 30px; font-size: 24px; display: inline-block; margin-right: 10px; " ),
-                                                 actionButton("new_slip_days", label = NULL, icon = icon("plus"), style = "margin-top: -5px;  background-color: transparent; margin-right: 10px; color: #50A5EA;"),
-                                                 hr(),
-                                             )),
-                                     )),
-                                 fluidRow(
-                                     
-                                     br(),
-                                     fluidRow(style = "margin-left: 10px;"),
-                                     uiOutput("slip_days_ui"),
-                                     
-                                 )
-                                 
-                        )
-                    )
+Policies <- bs4TabItem(tabName = "policies",
+  h2("Create Policy File", style = "text-align: center;"),
+  
+  ### COURSE NAME ###
+  fluidRow(
+    bs4Card(
+      width = 12,
+      solidHeader = FALSE,
+      headerBorder = FALSE,
+      collapsible = FALSE,
+      fluidRow(
+        column(
+          width = 12,
+          div(
+            style = "display: flex; align-items: center;",
+            div(
+              textOutput("course_name_display"),
+              style = "font-size: 24px; margin-right: 10px;"
+            ),
+            actionButton("edit_policy_name", label = NULL, icon = icon("pen-to-square"))
+          ),
+          div(
+            textOutput("course_description_display"),
+            style = "margin-top: 20px; font-size: 16px;"
+          )
+        )
+      )
+    )
+  ),
+  
+  ### CATEGORIES, LATENESS, SLIP DAYS TABS ###
+  bs4TabCard(
+    id = "policiesTabs",
+    width = 12,
+    side = "left",
+    status = "primary",
+    type = "tabs",
+    
+    ### TAB CATEGORIES ###
+    shiny::tabPanel(
+      title = "Categories",
+      icon = icon("list"),
+      fluidRow(
+        column(
+          width = 8,
+          uiOutput("categoriesUI")
+        ),
+        column(
+          width = 4,
+          h4("New Assignments:"),
+          uiOutput("unassigned")
+        )
+      )
+    ),
+    
+    ### TAB LATENESS POLICY ###
+    shiny::tabPanel(
+      title = "Lateness Policy",
+      icon = icon("clock"),
+      fluidRow(
+        column(
+          width = 12,
+          div(
+            style = "display: flex; align-items: center;",
+            h4("Add New Lateness Policy", style = "margin-right: 10px;"),
+            actionButton("new_lateness", label = NULL, icon = icon("plus"))
+          ),
+          hr()
+        )
+      ),
+      fluidRow(
+        column(
+          width = 12,
+          uiOutput("latenessUI")
+        )
+      )
+    ),
+    
+    ### TAB SLIP DAYS ###
+    shiny::tabPanel(
+      title = "Slip Days",
+      icon = icon("calendar-days"),
+      fluidRow(
+        column(
+          width = 12,
+          div(
+            style = "display: flex; align-items: center;",
+            h4("Add New Slip Days Policy", style = "margin-right: 10px;"),
+            actionButton("new_slip_days", label = NULL, icon = icon("plus"))
+          ),
+          hr()
+        )
+      ),
+      fluidRow(
+        column(
+          width = 12,
+          uiOutput("slip_days_ui")
+        )
+      )
+    )
+  )
 )
