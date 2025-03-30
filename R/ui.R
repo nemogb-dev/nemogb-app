@@ -14,6 +14,7 @@ sidebar <- bs4DashSidebar(
   minified = TRUE,
   expandOnHover = FALSE,
   bs4SidebarMenu(
+    id = "sidebarMenu", 
     bs4SidebarMenuItem(
       text = "Dashboard",
       tabName = "dashboard",
@@ -24,12 +25,15 @@ sidebar <- bs4DashSidebar(
       tabName = "policies",
       icon = icon("file-pen")
     ),
-    # Upload controls
-    fileInput("upload_gs", "Upload Student Data", accept = c(".csv")),
-    fileInput("upload_policy", "Upload Policy File", accept = c(".yml")),
-    # Download controls
-    downloadButton("download_grades", "Grades"),
-    downloadButton("download_policy_file", "Policy File")
+    # Wrap extra controls in a div
+    tags$div(class = "sidebar-extra-content",
+      # Upload controls
+      fileInput("upload_gs", "Upload Student Data", accept = c(".csv")),
+      fileInput("upload_policy", "Upload Policy File", accept = c(".yml")),
+      # Download controls
+      downloadButton("download_grades", "Grades"),
+      downloadButton("download_policy_file", "Policy File")
+    )
   )
 )
 
@@ -49,51 +53,44 @@ footer <- bs4DashFooter(
 body <- bs4DashBody(
   tags$head(
     tags$style(HTML("
-      /* Make plots responsive */
-      .responsive-plot .plotly {
-        width: 100% !important;
-        height: 300px !important;
+      /* Custom CSS rules */
+      .vh-30 {
+        height: 30vh;
       }
-      
-      /* Adjust plot height based on screen size */
-      @media (max-width: 768px) {
-        .responsive-plot .plotly {
-          height: 250px !important;
-        }
-      }
-      
-      /* Ensure cards resize properly */
-      .card {
-        transition: width 0.3s, height 0.3s;
-        overflow: auto;
-      }
-      
-      /* Ensure content adjusts when sidebar is toggled */
-      .content-wrapper {
-        transition: margin-left 0.3s;
-      }
-      
-      /* Make sure DataTables are responsive */
-      .dataTables_wrapper {
-        width: 100%;
-        overflow-x: auto;
-      }
-      
-      /* Ensure statistics container is responsive */
-      .stats-container {
-        width: 100%;
-        margin-top: 1rem;
-      }
-      
-      /* Add some spacing for better readability */
-      .py-1 {
-        padding-top: 0.25rem;
-        padding-bottom: 0.25rem;
-      }
-      
-      /* Create a custom class for vertical height */
       .vh-60 {
         height: 60vh;
+      }
+
+      /* Hide sidebar-extra-content when sidebar is collapsed */
+      body.sidebar-collapse .sidebar-extra-content {
+        display: none;
+      }
+
+      /* Styling for extra content when sidebar is EXPANDED */
+      .sidebar-extra-content {
+        padding-left: 8px;  /* Match typical sidebar padding */
+        padding-right: 8px;
+        margin-top: 10px; /* Add some space above */
+      }
+
+      .sidebar-extra-content .form-group label {
+         margin-left: 2px; /* Align label slightly */
+      }
+
+      /* Style file inputs and download buttons */
+      .sidebar-extra-content .form-group,
+      .sidebar-extra-content .btn {
+          width: 100%;          /* Make them fill available width */
+          margin-left: 0;       /* Remove previous margin */
+          margin-right: 0;      /* Remove previous margin */
+          margin-bottom: 10px;
+          box-sizing: border-box; /* Include padding/border in width */
+      }
+
+      /* Ensure buttons don't change size on hover/focus */
+      .sidebar-extra-content .btn:hover,
+      .sidebar-extra-content .btn:focus {
+          /* Add specific styles if needed, but often just ensuring width: 100% is enough */
       }
     "))
   ),
@@ -114,7 +111,10 @@ ui <- bs4DashPage(
   dark = NULL,
   help = NULL,
   header = dashboardHeader(
-    title = "Nemo Gradebook",
+    title = dashboardBrand(
+      title = "Nemo Gradebook",
+      image = 'https://m.media-amazon.com/images/I/71giHMMMxpL.jpg', 
+    ),
     controlbarIcon = NULL,
     fixed = TRUE
   ),
