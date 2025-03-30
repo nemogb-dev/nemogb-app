@@ -33,7 +33,6 @@ sidebar <- bs4DashSidebar(
   )
 )
 
-# Empty controlbar for now
 controlbar <- bs4DashControlbar(
   id = "controlbar",
   skin = "light",
@@ -47,9 +46,7 @@ footer <- bs4DashFooter(
   right = "Nemo Gradebook"
 )
 
-# Main body with tabsets - using the sourced components
 body <- bs4DashBody(
-  # Add responsive CSS
   tags$head(
     tags$style(HTML("
       /* Make plots responsive */
@@ -101,7 +98,6 @@ body <- bs4DashBody(
     "))
   ),
   bs4TabItems(
-    # Convert the sourced tabItems to bs4TabItems
     bs4TabItem(
       tabName = "dashboard",
       Dashboard$children
@@ -115,10 +111,11 @@ body <- bs4DashBody(
 
 ui <- bs4DashPage(
   title = "Nemo Gradebook",
-  skin = "light",
+  dark = NULL,
+  help = NULL,
   header = dashboardHeader(
     title = "Nemo Gradebook",
-    controlbarIcon = NULL,  # Remove the question mark toggle
+    controlbarIcon = NULL,
     fixed = TRUE
   ),
   sidebar = sidebar,
