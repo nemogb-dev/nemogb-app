@@ -776,64 +776,102 @@ shinyServer(function(input, output, session) {
         # if categories are made OR data is uploaded.
         if (length(policy$categories) > 0 && !is.null(assign$table$assignment)) {
             fluidRow(
+                # Assignment Card - Combined options and plot with stats in tab
                 bs4Card(
+                    title = "Assignment Analysis",
+                    width = 12,
+                    collapsible = TRUE,
+                    maximizable = TRUE,
+                    fluidRow(
+                        # Left side - Options
+                        column(
+                            width = 12,
+                            div(
+                                class = "mb-3",
+                                selectInput('which_assignment', label = "Select Assignment", choices = assign$table$assignment)
+                            )
+                        )
+                    ),
                     bs4TabCard(
                         id = "assignment_tabs",
-                        shiny::tabPanel( # Use shiny::tabPanel
-                            title = 'Plot', 
-                            plotlyOutput('assignment_plotly')
+                        type = "tabs",
+                        collapsible = FALSE,
+                        width = 12,
+                        shiny::tabPanel(
+                            title = "Plot",
+                            icon = icon("chart-simple"),
+                            div(
+                                class = "responsive-plot p-2",
+                                style = "width: 100%; height: 400px;",
+                                plotlyOutput('assignment_plotly', height = "100%")
+                            )
                         ),
-                        shiny::tabPanel( # Use shiny::tabPanel
-                            title = 'Statistics', 
-                            # TODO
+                        shiny::tabPanel(
+                            title = "Statistics",
+                            icon = icon("calculator"),
                             uiOutput('assignment_stats')
                         )
-                    ),
-                    width = 6
+                    )
                 ),
+                
+                # Category Card - Combined options and plot with stats in tab
                 bs4Card(
-                    title = 'Assignment Options',
-                    selectInput('which_assignment', label=NULL, choices = assign$table$assignment),
-                    # TODO: radioButtons('assignment_score_option', 'Choose an option:', 
-                    #              choices = list('Percentage' = 'percentage', 
-                    #                             'By Points' = 'point'),
-                    #              selected = 'percentage'),
-                    width = 6
-                ),
-                bs4Card(
-                    bs4TabCard(
-                        id = "category_tabs",
-                        shiny::tabPanel( # Use shiny::tabPanel
-                            title = 'Plot', 
-                            plotlyOutput('category_plotly')
-                        ),
-                        shiny::tabPanel( # Use shiny::tabPanel
-                            title = 'Statistics', 
-                            # TODO
-                            uiOutput('category_stats')
+                    title = "Category Analysis",
+                    width = 12,
+                    collapsible = TRUE,
+                    maximizable = TRUE,
+                    fluidRow(
+                        # Left side - Options
+                        column(
+                            width = 12,
+                            div(
+                                class = "mb-3",
+                                selectInput('which_category', label = "Select Category", choices = available_categories())
+                            )
                         )
                     ),
-                    width = 6
+                    bs4TabCard(
+                        id = "category_tabs",
+                        type = "tabs",
+                        collapsible = FALSE,
+                        width = 12,
+                        shiny::tabPanel(
+                            title = "Plot",
+                            icon = icon("chart-simple"),
+                            div(
+                                class = "responsive-plot p-2",
+                                style = "width: 100%; height: 400px;",
+                                plotlyOutput('category_plotly', height = "100%")
+                            )
+                        ),
+                        shiny::tabPanel(
+                            title = "Statistics",
+                            icon = icon("calculator"),
+                            uiOutput('category_stats')
+                        )
+                    )
                 ),
-                bs4Card(
-                    title = 'Category Options', 
-                    selectInput('which_category', label=NULL, choices = available_categories()),
-                    # TODO: radioButtons('choice2', 'Choose an option:',
-                    #              choices = list('Percentage' = 'percentage', 
-                    #                             'By Points' = 'point'),
-                    #              selected = 'percentage'),
-                    width = 6
-                ),
+                
+                # Overall Course Distribution
                 bs4Card(
                     title = 'Overall Course Distribution',
-                    plotlyOutput('overall_plotly'),
-                    width = 12
+                    width = 12,
+                    collapsible = TRUE,
+                    maximizable = TRUE,
+                    div(
+                        class = "responsive-plot",
+                        plotlyOutput('overall_plotly', height = "auto")
+                    )
                 ),
+                
+                # Student Data Table
                 bs4Card(
                     title = 'Student Data',
-                    DT::DTOutput('course_data_table'),
-                    width = 12
-                    )
+                    width = 12,
+                    collapsible = TRUE,
+                    maximizable = TRUE,
+                    DT::DTOutput('course_data_table')
+                )
             )
         } else if (length(policy$categories) > 0) { # policy is created only
             tags$div(class = 'd-flex flex-column justify-content-center align-items-center vh-60',
@@ -915,6 +953,23 @@ shinyServer(function(input, output, session) {
                 )
             
             plt
+        } else {
+            # Create an empty plot with informative message when grades aren't available
+            plot_ly() |>
+                add_annotations(
+                    text = "Complete your course policy configuration in the Policies tab to view category analysis",
+                    x = 0.5,
+                    y = 0.5,
+                    xref = "paper",
+                    yref = "paper",
+                    showarrow = FALSE,
+                    font = list(size = 14)
+                ) |>
+                layout(
+                    xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                    yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE)
+                ) |>
+                config(displayModeBar = FALSE)
         }
     })
     
@@ -939,6 +994,12 @@ shinyServer(function(input, output, session) {
                 div(class = "d-flex justify-content-between border-bottom py-1", p("25%ile"), p(tfive)),
                 div(class = "d-flex justify-content-between py-1", p("75%ile"), p(sfive))
             )
+        } else {
+            div(
+                class = "d-flex flex-column justify-content-center align-items-center p-3",
+                icon("info-circle", class = "text-info mb-2"),
+                p("Statistics will be available after you complete your course policy configuration", class = "text-center")
+            )
         }
     })
     
@@ -948,6 +1009,23 @@ shinyServer(function(input, output, session) {
                 config(displayModeBar = FALSE) |>
                 layout(dragmode = FALSE)
             plt
+        } else {
+            # Create an empty plot with informative message when grades aren't available
+            plot_ly() |>
+                add_annotations(
+                    text = "Overall course distribution will appear after you complete your course policy configuration",
+                    x = 0.5,
+                    y = 0.5,
+                    xref = "paper",
+                    yref = "paper",
+                    showarrow = FALSE,
+                    font = list(size = 14)
+                ) |>
+                layout(
+                    xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                    yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE)
+                ) |>
+                config(displayModeBar = FALSE)
         }
     })
     

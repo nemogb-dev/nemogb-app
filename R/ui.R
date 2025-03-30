@@ -11,6 +11,8 @@ source(paste0(UICompDirectory, "dashboard.R"), local = TRUE)
 # Define basic UI components
 sidebar <- bs4DashSidebar(
   skin = "light",
+  minified = TRUE,
+  expandOnHover = FALSE,
   bs4SidebarMenu(
     bs4SidebarMenuItem(
       text = "Dashboard",
@@ -47,28 +49,57 @@ footer <- bs4DashFooter(
 
 # Main body with tabsets - using the sourced components
 body <- bs4DashBody(
-  # # Add CSS to override white backgrounds
-  # tags$head(
-  #   tags$style(HTML("
-  #     /* Override white backgrounds in components */
-  #     .card, .tab-content, .box, .tab-pane, .card-body {
-  #       background-color: transparent !important;
-  #     }
-  #     /* Remove borders that might make white backgrounds stand out */
-  #     .card, .box {
-  #       border: none !important;
-  #       box-shadow: none !important;
-  #     }
-  #     /* Override any inline styles with !important */
-  #     [style*='background-color: #ffffff'] {
-  #       background-color: transparent !important;
-  #     }
-  #     /* Make sure text is visible against the page background */
-  #     body {
-  #       color: #333;
-  #     }
-  #   "))
-  # ),
+  # Add responsive CSS
+  tags$head(
+    tags$style(HTML("
+      /* Make plots responsive */
+      .responsive-plot .plotly {
+        width: 100% !important;
+        height: 300px !important;
+      }
+      
+      /* Adjust plot height based on screen size */
+      @media (max-width: 768px) {
+        .responsive-plot .plotly {
+          height: 250px !important;
+        }
+      }
+      
+      /* Ensure cards resize properly */
+      .card {
+        transition: width 0.3s, height 0.3s;
+        overflow: auto;
+      }
+      
+      /* Ensure content adjusts when sidebar is toggled */
+      .content-wrapper {
+        transition: margin-left 0.3s;
+      }
+      
+      /* Make sure DataTables are responsive */
+      .dataTables_wrapper {
+        width: 100%;
+        overflow-x: auto;
+      }
+      
+      /* Ensure statistics container is responsive */
+      .stats-container {
+        width: 100%;
+        margin-top: 1rem;
+      }
+      
+      /* Add some spacing for better readability */
+      .py-1 {
+        padding-top: 0.25rem;
+        padding-bottom: 0.25rem;
+      }
+      
+      /* Create a custom class for vertical height */
+      .vh-60 {
+        height: 60vh;
+      }
+    "))
+  ),
   bs4TabItems(
     # Convert the sourced tabItems to bs4TabItems
     bs4TabItem(
