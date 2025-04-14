@@ -58,8 +58,6 @@ shinyServer(function(input, output, session) {
             showNotification('Please upload a policy file in YAML format','',type = "error")
         })
     })
-    
-   
 
     #### -------------------------- POLICY ----------------------------####  
     policy <- reactiveValues(coursewide = list(course_name = "Course Name", description = "Description"),
@@ -90,8 +88,6 @@ shinyServer(function(input, output, session) {
             )
         ))
     })
-    
-    
     
     # When save_changes is clicked, update the reactive values and close modal
     observeEvent(input$save_changes_course, {
