@@ -1,9 +1,8 @@
-# Base image with R and Shiny Server (specify platform for ARM Macs)
-# Consider using a specific tag like rocker/shiny:4.3.1 for reproducibility
-FROM --platform=linux/amd64 rocker/shiny:latest
+# ---------- Builder Stage ----------
+# Explicitly specify platform for ARM Mac compatibility
+FROM --platform=linux/amd64 rocker/shiny:latest AS builder
 
-# Step 1: Install system dependencies needed for packages and git
-# Combined into one layer, cleans up apt cache
+# Install system dependencies needed for building packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     libcurl4-openssl-dev \
@@ -11,23 +10,49 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxml2-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Step 2: Install CRAN packages using precompiled binaries (including remotes)
-# Combined into one layer. Consider pinning the repo date for reproducibility.
-RUN R -e "install.packages(c('remotes', 'bs4Dash', 'DT', 'shinyWidgets', 'tidyverse', 'yaml', 'plotly', 'bslib', 'readr'), dependencies=TRUE, repos='https://packagemanager.posit.co/cran/latest')"
+# Set CRAN repository to use precompiled binaries
+ENV CRAN_REPO="https://packagemanager.posit.co/cran/latest"
 
-# Verify critical packages are installed
-RUN R -e "pkgs <- c('remotes', 'bs4Dash', 'DT', 'shinyWidgets', 'tidyverse', 'yaml', 'plotly', 'bslib', 'readr'); missing <- pkgs[!(pkgs %in% installed.packages()[,'Package'])]; if (length(missing)) stop('Failed to install packages: ', paste(missing, collapse=', '))"
+# Create a directory to store installed R packages that we will copy later
+RUN mkdir -p /tmp/R_libs
 
-# Step 3: Install nemogb-r package from GitHub
-# This step might still be slow if compilation is needed.
-RUN R -e "remotes::install_github('nemogb-dev/nemogb-r@main')"
+# Set library path to our temporary directory
+ENV R_LIBS_USER="/tmp/R_libs"
 
-# Step 4: Copy the application code
-# Copying code *after* dependencies leverages Docker cache
-COPY R/ /srv/shiny-server/
+# Install and verify core packages
+RUN R -e "install.packages(c('remotes', 'yaml', 'readr'), dependencies=TRUE, repos='$CRAN_REPO')" && \
+    R -e "pkgs <- c('remotes', 'yaml', 'readr'); \
+          missing <- pkgs[!(pkgs %in% installed.packages(lib.loc = '$R_LIBS_USER')[,'Package'])]; \
+          if (length(missing)) stop('Failed to install packages: ', paste(missing, collapse=', '))" 
 
-# Step 5: Expose the default Shiny Server port
+# Install and verify tidyverse separately (most likely to fail)
+RUN R -e "install.packages('tidyverse', dependencies=TRUE, repos='$CRAN_REPO', verbose=TRUE)" && \
+    R -e "if (!('tidyverse' %in% installed.packages(lib.loc = '$R_LIBS_USER')[,'Package'])) \
+          stop('Failed to install tidyverse')" 
+
+# Install and verify Shiny-related packages
+RUN R -e "install.packages(c('bs4Dash', 'DT', 'shinyWidgets', 'plotly', 'bslib'), dependencies=TRUE, repos='$CRAN_REPO')" && \
+    R -e "pkgs <- c('bs4Dash', 'DT', 'shinyWidgets', 'plotly', 'bslib'); \
+          missing <- pkgs[!(pkgs %in% installed.packages(lib.loc = '$R_LIBS_USER')[,'Package'])]; \
+          if (length(missing)) stop('Failed to install packages: ', paste(missing, collapse=', '))"
+
+# Install nemogb-r from GitHub
+RUN R -e "remotes::install_github('nemogb-dev/nemogb-r@main', lib = '$R_LIBS_USER')"
+
+# Copy the application code into the builder (for later copy to final image)
+COPY R/ /tmp/app/
+
+# ---------- Final Runtime Stage ----------
+# Ensure consistent platform between stages
+FROM --platform=linux/amd64 rocker/shiny:latest
+
+# Copy installed R packages from builder stage
+COPY --from=builder /tmp/R_libs /usr/local/lib/R/site-library
+
+# Copy application code
+COPY --from=builder /tmp/app/ /srv/shiny-server/
+
+# Expose the default Shiny Server port
 EXPOSE 3838
 
-# Optional: Add a CMD to run the Shiny Server if not inherited
-# CMD ["/usr/bin/shiny-server"]
+# The base image already contains an entrypoint for launching Shiny Server
