@@ -19,25 +19,26 @@ RUN mkdir -p /tmp/R_libs
 # Set library path to our temporary directory
 ENV R_LIBS_USER="/tmp/R_libs"
 
-# Install and verify core packages
-RUN R -e "install.packages(c('remotes', 'yaml', 'readr'), dependencies=TRUE, repos='$CRAN_REPO')" && \
-    R -e "pkgs <- c('remotes', 'yaml', 'readr'); \
-          missing <- pkgs[!(pkgs %in% installed.packages(lib.loc = '$R_LIBS_USER')[,'Package'])]; \
-          if (length(missing)) stop('Failed to install packages: ', paste(missing, collapse=', '))" 
+# Install pak for efficient package management
+RUN R -e "install.packages('pak', repos='$CRAN_REPO')"
 
-# Install and verify tidyverse separately (most likely to fail)
-RUN R -e "install.packages('tidyverse', dependencies=TRUE, repos='$CRAN_REPO', verbose=TRUE)" && \
-    R -e "if (!('tidyverse' %in% installed.packages(lib.loc = '$R_LIBS_USER')[,'Package'])) \
-          stop('Failed to install tidyverse')" 
+# Install all required packages with pak (handles dependencies and system requirements automatically)
+RUN R -e "options(repos=c(CRAN='$CRAN_REPO')); \
+          pak::pkg_install(c( \
+            # Core packages
+            'remotes', 'yaml', 'readr', \
+            # Tidyverse packages
+            'tidyverse', \
+            # Shiny-related packages
+            'bs4Dash', 'DT', 'shinyWidgets', 'plotly', 'bslib', \
+            # Additional packages needed for the nemogb-app
+            'shinydashboard', 'markdown', 'rmarkdown', 'knitr', \
+            # Additional utility packages
+            'htmltools', 'shiny' \
+          ), lib = '/tmp/R_libs')"
 
-# Install and verify Shiny-related packages
-RUN R -e "install.packages(c('bs4Dash', 'DT', 'shinyWidgets', 'plotly', 'bslib'), dependencies=TRUE, repos='$CRAN_REPO')" && \
-    R -e "pkgs <- c('bs4Dash', 'DT', 'shinyWidgets', 'plotly', 'bslib'); \
-          missing <- pkgs[!(pkgs %in% installed.packages(lib.loc = '$R_LIBS_USER')[,'Package'])]; \
-          if (length(missing)) stop('Failed to install packages: ', paste(missing, collapse=', '))"
-
-# Install nemogb-r from GitHub
-RUN R -e "remotes::install_github('nemogb-dev/nemogb-r@main', lib = '$R_LIBS_USER')"
+# Install nemogb-r from GitHub with pak
+RUN R -e "pak::pkg_install('nemogb-dev/nemogb-r@main', lib = '/tmp/R_libs')"
 
 # Copy the application code into the builder (for later copy to final image)
 COPY R/ /tmp/app/
