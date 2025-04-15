@@ -18,12 +18,12 @@ sidebar <- bs4DashSidebar(
     bs4SidebarMenuItem(
       text = "Dashboard",
       tabName = "dashboard",
-      icon = icon("chart-line", class = "fixed-width-icon")
+      icon = icon("chart-line")
     ),
     bs4SidebarMenuItem(
       text = "Policies",
       tabName = "policies",
-      icon = icon("file-pen", class = "fixed-width-icon")
+      icon = icon("file-pen")
     ),
     # Wrap extra controls in a div
     tags$div(class = "sidebar-extra-content",
@@ -34,11 +34,6 @@ sidebar <- bs4DashSidebar(
       tags$div(class = "download-buttons-container",
         downloadButton("download_grades", "Grades"),
         downloadButton("download_policy_file", "Policy File")
-      ),
-      # Version tooltip from main branch
-      tags$div(class = "version-tooltip",
-        icon("question-circle"),
-        tags$div(class = "tooltiptext", paste0("NemoGB Version: ", app_version, ". Hosted by Netlify."))
       )
     )
   )
@@ -114,38 +109,6 @@ body <- bs4DashBody(
       .sidebar-extra-content .btn:hover,
       .sidebar-extra-content .btn:focus {
           /* Add specific styles if needed, but often just ensuring width: 100% is enough */
-      }
-      
-      /* Version tooltip styles from main branch */
-      .fixed-width-icon {
-        width: 25px !important;
-        text-align: left;
-      }
-      .version-tooltip {
-        position: fixed;
-        bottom: 10px;
-        left: 10px;
-        cursor: pointer;
-      }
-      .tooltiptext {
-        visibility: hidden;
-        font-size: .8em;
-        background-color: #555;
-        color: #fff;
-        text-align: center;
-        border-radius: 6px;
-        padding: 5px;
-        position: absolute;
-        z-index: 1;
-        left: 105%;
-        top: 50%;
-        margin-top: -15px;
-        opacity: 0;
-        transition: opacity 0.3s;
-      }
-      .version-tooltip:hover .tooltiptext {
-        visibility: visible;
-        opacity: 1;
       }
     "))
   ),
