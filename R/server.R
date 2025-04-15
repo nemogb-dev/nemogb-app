@@ -4,7 +4,7 @@ library(tidyverse)
 library(plotly)
 library(bslib)
 library(readr)
-library(shinydashboard)
+library(bs4Dash)
 
 #load helper scripts
 HSLocation <- "helperscripts/"
@@ -58,8 +58,6 @@ shinyServer(function(input, output, session) {
             showNotification('Please upload a policy file in YAML format','',type = "error")
         })
     })
-    
-   
 
     #### -------------------------- POLICY ----------------------------####  
     policy <- reactiveValues(coursewide = list(course_name = "Course Name", description = "Description"),
@@ -90,8 +88,6 @@ shinyServer(function(input, output, session) {
             )
         ))
     })
-    
-    
     
     # When save_changes is clicked, update the reactive values and close modal
     observeEvent(input$save_changes_course, {
@@ -776,81 +772,133 @@ shinyServer(function(input, output, session) {
         # if categories are made OR data is uploaded.
         if (length(policy$categories) > 0 && !is.null(assign$table$assignment)) {
             fluidRow(
-                box(
-                    tabsetPanel(
-                        tabPanel('Plot', 
-                                 plotlyOutput('assignment_plotly', height = '220px')
-                        ),
-                        tabPanel('Statistics', 
-                                 # TODO
-                                 uiOutput('assignment_stats'),
-                        ),
-                    ),
-                    width = 6,
-                    height = '300px',
-                ),
-                box(
-                    title = 'Assignment Options',
-                    selectInput('which_assignment', label=NULL, choices = assign$table$assignment),
-                    # TODO: radioButtons('assignment_score_option', 'Choose an option:', 
-                    #              choices = list('Percentage' = 'percentage', 
-                    #                             'By Points' = 'point'),
-                    #              selected = 'percentage'),
-                    width = 6,
-                    height = '300px'
-                    
-                ),
-                box(
-                    tabsetPanel(
-                        tabPanel('Plot', 
-                                 plotlyOutput('category_plotly', height = '220px'),
-                        ),
-                        tabPanel('Statistics', 
-                                 # TODO
-                                 uiOutput('category_stats', height = '200px'),
-                        ),
-                    ),
-                    width = 6,
-                    height = '300px'
-                ),
-                box(
-                    title = 'Category Options', 
-                    selectInput('which_category', label=NULL, choices = available_categories()),
-                    # TODO: radioButtons('choice2', 'Choose an option:',
-                    #              choices = list('Percentage' = 'percentage', 
-                    #                             'By Points' = 'point'),
-                    #              selected = 'percentage'),
-                    width = 6,
-                    height = '300px'
-                ),
-                box(
-                    title = 'Overall Course Distribution',
-                    plotlyOutput('overall_plotly', height = '320px'),
+                # Assignment and Category Analysis side by side
+                column(
                     width = 12,
-                    height = '400px'
-                ),
-                box(
-                    title = 'Student Data',
-                    DT::DTOutput('course_data_table'),
-                    width = 12
+                    style = "padding: 0;",
+                    fluidRow(
+                        # Assignment Card
+                        column(
+                            width = 6,
+                            style = "padding-right: 8px;",
+                            bs4Card(
+                                title = "Assignment Analysis",
+                                width = NULL,
+                                status = "primary",
+                                solidHeader = FALSE,
+                                collapsible = TRUE,
+                                maximizable = TRUE,
+                                selectInput('which_assignment', label = "Select Assignment", choices = assign$table$assignment, width = "100%"),
+                                bs4TabCard(
+                                    id = "assignment_tabs",
+                                    type = "tabs",
+                                    status = "primary",
+                                    collapsible = FALSE,
+                                    width = NULL,
+                                    shiny::tabPanel(
+                                        title = "Plot",
+                                        icon = icon("chart-simple"),
+                                        div(
+                                            class = "responsive-plot",
+                                            style = "width: 100%; height: 350px;",
+                                            plotlyOutput('assignment_plotly', height = "100%", width = "100%")
+                                        )
+                                    ),
+                                    shiny::tabPanel(
+                                        title = "Statistics",
+                                        icon = icon("calculator"),
+                                        div(
+                                            style = "width: 100%; height: 350px; overflow-y: auto;",
+                                            uiOutput('assignment_stats')
+                                        )
+                                    )
+                                )
+                            )
+                        ),
+                        
+                        # Category Card
+                        column(
+                            width = 6,
+                            style = "padding-left: 8px;",
+                            bs4Card(
+                                title = "Category Analysis",
+                                width = NULL,
+                                status = "primary",
+                                solidHeader = FALSE,
+                                collapsible = TRUE,
+                                maximizable = TRUE,
+                                selectInput('which_category', label = "Select Category", choices = available_categories(), width = "100%"),
+                                bs4TabCard(
+                                    id = "category_tabs",
+                                    type = "tabs",
+                                    status = "primary",
+                                    collapsible = FALSE,
+                                    width = NULL,
+                                    shiny::tabPanel(
+                                        title = "Plot",
+                                        icon = icon("chart-simple"),
+                                        div(
+                                            class = "responsive-plot",
+                                            style = "width: 100%; height: 350px;",
+                                            plotlyOutput('category_plotly', height = "100%", width = "100%")
+                                        )
+                                    ),
+                                    shiny::tabPanel(
+                                        title = "Statistics",
+                                        icon = icon("calculator"),
+                                        div(
+                                            style = "width: 100%; height: 350px; overflow-y: auto;",
+                                            uiOutput('category_stats')
+                                        )
+                                    )
+                                )
+                            )
+                        )
                     )
+                ),
+                
+                # Overall Course Distribution
+                bs4Card(
+                    title = 'Overall Course Distribution',
+                    width = 12,
+                    status = "primary",
+                    solidHeader = FALSE,
+                    collapsible = TRUE,
+                    maximizable = TRUE,
+                    div(
+                        class = "responsive-plot",
+                        style = "width: 100%; height: 300px;",
+                        plotlyOutput('overall_plotly', height = "100%", width = "100%")
+                    )
+                ),
+                
+                # Student Data Table
+                bs4Card(
+                    title = 'Student Data',
+                    width = 12,
+                    status = "primary",
+                    solidHeader = FALSE,
+                    collapsible = TRUE,
+                    maximizable = TRUE,
+                    DT::DTOutput('course_data_table')
+                )
             )
         } else if (length(policy$categories) > 0) { # policy is created only
-            tags$div(style = 'display: flex; flex-direction: column; justify-content: center; align-items: center; height: 60vh;',
+            tags$div(class = 'd-flex flex-column justify-content-center align-items-center vh-60',
                      tagList(
                          h4(strong('You haven\'t uploaded any student data yet.')),
                          h5('Upload course data from Gradescope to get started.')
                      )
             )
         } else if (!is.null(assign$table$assignment)) {
-            tags$div(style = 'display: flex; flex-direction: column; justify-content: center; align-items: center; height: 60vh;',
+            tags$div(class = 'd-flex flex-column justify-content-center align-items-center vh-60',
                      tagList(
                          h4(strong('You still need to build your course policy.')),
                          h5('See "Policies" tab to get started.')
                      )
             )
         } else {
-            tags$div(style = 'display: flex; flex-direction: column; justify-content: center; align-items: center; height: 60vh;',
+            tags$div(class = 'd-flex flex-column justify-content-center align-items-center vh-60',
                      tagList(
                          h4(strong('You haven\'t uploaded any student data yet.')),
                          h5('Summary statistics and plots will appear here as you build your course policy.')
@@ -890,13 +938,19 @@ shinyServer(function(input, output, session) {
         tfive <- quantile(assignment_vec, 0.25) |> round(digits = 4)
         sfive <- quantile(assignment_vec, 0.75) |> round(digits = 4)
         
-        HTML(paste0(
-            '<div style="display: flex; justify-content: space-between; border-bottom: 1px solid black; padding: 5px 0;"><p>Mean</p> <p>', mu, '</p></div>',
-            '<div style="display: flex; justify-content: space-between; border-bottom: 1px solid black; padding: 5px 0;"><p>Standard Deviation</p> <p>', sd, '</p></div>',
-            '<div style="display: flex; justify-content: space-between; border-bottom: 1px solid black; padding: 5px 0;"><p>Median</p> <p>', med, '</p></div>',
-            '<div style="display: flex; justify-content: space-between; border-bottom: 1px solid black; padding: 5px 0;"><p>25%ile</p> <p>', tfive, '</p></div>',
-            '<div style="display: flex; justify-content: space-between; padding: 5px 0;"><p>75%ile</p> <p>', sfive, '</p></div>'
-        ))
+        # Create a data frame for the statistics
+        stats_df <- data.frame(
+          Statistic = c("Mean", "Standard Deviation", "Median", "25 percentile", "75 percentile"),
+          Value = c(mu, sd, med, tfive, sfive)
+        )
+        
+        # Use bs4Table to display the statistics
+        bs4Table(
+          data = stats_df,
+          striped = TRUE,
+          bordered = FALSE,
+          width = "100%"
+        )
     })
     
     output$category_plotly <- renderPlotly({
@@ -914,6 +968,23 @@ shinyServer(function(input, output, session) {
                 )
             
             plt
+        } else {
+            # Create an empty plot with informative message when grades aren't available
+            plot_ly() |>
+                add_annotations(
+                    text = "No course policy configuration available.",
+                    x = 0.5,
+                    y = 0.5,
+                    xref = "paper",
+                    yref = "paper",
+                    showarrow = FALSE,
+                    font = list(size = 14)
+                ) |>
+                layout(
+                    xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                    yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE)
+                ) |>
+                config(displayModeBar = FALSE)
         }
     })
     
@@ -930,13 +1001,24 @@ shinyServer(function(input, output, session) {
             tfive <- paste0((quantile(category_vec, 0.25) |> round(digits = 4)) * 100, '%')
             sfive <- paste0((quantile(category_vec, 0.75) |> round(digits = 4)) * 100, '%')
             
-            HTML(paste0(
-                '<div style="display: flex; justify-content: space-between; border-bottom: 1px solid black; padding: 5px 0;"><p>Mean</p> <p>', mu, '</p></div>',
-                '<div style="display: flex; justify-content: space-between; border-bottom: 1px solid black; padding: 5px 0;"><p>Standard Deviation</p> <p>', sd, '</p></div>',
-                '<div style="display: flex; justify-content: space-between; border-bottom: 1px solid black; padding: 5px 0;"><p>Median</p> <p>', med, '</p></div>',
-                '<div style="display: flex; justify-content: space-between; border-bottom: 1px solid black; padding: 5px 0;"><p>25%ile</p> <p>', tfive, '</p></div>',
-                '<div style="display: flex; justify-content: space-between; padding: 5px 0;"><p>75%ile</p> <p>', sfive, '</p></div>'
-            ))
+            # Create a data frame for the statistics
+            stats_df <- data.frame(
+              Statistic = c("Mean", "Standard Deviation", "Median", "25 percentile", "75 percentile"),
+              Value = c(mu, sd, med, tfive, sfive)
+            )
+            
+            # Use bs4Table to display the statistics
+            bs4Table(
+              data = stats_df,
+              striped = TRUE,
+              bordered = FALSE,
+              width = "100%"
+            )
+        } else {
+            div(
+                class = "d-flex flex-column justify-content-center align-items-center p-3",
+                p("No course policy configuration available.", class = "text-center")
+            )
         }
     })
     
@@ -946,6 +1028,23 @@ shinyServer(function(input, output, session) {
                 config(displayModeBar = FALSE) |>
                 layout(dragmode = FALSE)
             plt
+        } else {
+            # Create an empty plot with informative message when grades aren't available
+            plot_ly() |>
+                add_annotations(
+                    text = "No course policy configuration available.",
+                    x = 0.5,
+                    y = 0.5,
+                    xref = "paper",
+                    yref = "paper",
+                    showarrow = FALSE,
+                    font = list(size = 14)
+                ) |>
+                layout(
+                    xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                    yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE)
+                ) |>
+                config(displayModeBar = FALSE)
         }
     })
     
@@ -957,14 +1056,14 @@ shinyServer(function(input, output, session) {
                 select(!ends_with(" - Lateness (H:M:S)")) |>
                 select(!contains("Total Lateness"))
             
-            DT::datatable(grades_for_DT, options = list(scrollX = TRUE, scrollY = '300px'))
+            DT::datatable(grades_for_DT, options = list(scrollX = TRUE))
         } else if (!is.null(data())) {
             data_for_DT <- data() |>
                 select(!ends_with(" - Submission Time")) |>
                 select(!ends_with(" - Lateness (H:M:S)")) |>
                 select(!contains("Total Lateness"))
             # Display data() even if no policy exists yet
-            DT::datatable(data_for_DT, options = list(scrollX = TRUE, scrollY = '300px'))
+            DT::datatable(data_for_DT, options = list(scrollX = TRUE))
         }
     })
     

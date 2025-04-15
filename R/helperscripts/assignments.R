@@ -1,4 +1,3 @@
-
 #returns list of assignments with no assigned category
 getUnassigned <- function(assign_table){
     assigns <- assign_table[["assignment"]][assign_table$category == "Unassigned"]
@@ -89,13 +88,14 @@ createNestedCards <- function(flat_categories, category_levels) {
         }
         style <- if (level > 1) "margin-left: 20px;" else ""
         
-        box(title = title, 
+        bs4Card(
+            title = title, 
             status = "primary", 
             collapsible = TRUE, 
             collapsed = !(level %in% c(1, 2)),  
             width = 12, 
-            div(style = style, content))
-        
+            div(style = style, content)
+        )
     }
     
     # Function to recursively create cards for nested categories

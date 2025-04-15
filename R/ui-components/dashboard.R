@@ -1,9 +1,9 @@
-Dashboard <- tabItem(tabName = "dashboard",
-                     fluidRow(
-                         tagList(
-                             div(style = "padding: 0px 20px 20px 20px;",
-                                 h2("Dashboard"),
-                                 uiOutput("dashboard")
-                             ))
-                     )
+Dashboard <- bs4TabItem(tabName = "dashboard",
+  fluidRow(
+    bs4Card(
+      title = "Dashboard",
+      width = 12,
+      uiOutput("dashboard")
+    )
+  )
 )
