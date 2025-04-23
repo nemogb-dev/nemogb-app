@@ -4,6 +4,13 @@ library(shiny)
 # Define UI component directory and source files
 UICompDirectory <- "ui-components/"
 
+# Get app version from git tag
+app_version <- tryCatch({
+  system("git describe --tags --abbrev=0", intern = TRUE)
+}, error = function(e) {
+  "dev"
+})
+
 source(paste0(UICompDirectory, "files.R"), local = TRUE)
 source(paste0(UICompDirectory, "policies.R"), local = TRUE)
 source(paste0(UICompDirectory, "dashboard.R"), local = TRUE)
@@ -46,9 +53,13 @@ controlbar <- bs4DashControlbar(
   collapsed = TRUE
 )
 
-# Simple footer
+# Simple footer with version tooltip
 footer <- bs4DashFooter(
   fixed = FALSE,
+  left = tags$div(class = "version-tooltip",
+    icon("question-circle"),
+    tags$div(class = "tooltiptext", paste0("NemoGB Version: ", app_version))
+  ),
   right = "Nemo Gradebook"
 )
 
@@ -109,6 +120,33 @@ body <- bs4DashBody(
       .sidebar-extra-content .btn:hover,
       .sidebar-extra-content .btn:focus {
           /* Add specific styles if needed, but often just ensuring width: 100% is enough */
+      }
+      
+      /* Version tooltip styles */
+      .version-tooltip {
+        cursor: pointer;
+        display: inline-block;
+        position: relative;
+      }
+      .tooltiptext {
+        visibility: hidden;
+        font-size: .8em;
+        background-color: #555;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px;
+        position: absolute;
+        z-index: 1;
+        left: 105%;
+        bottom: 0;
+        margin-left: 5px;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      .version-tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
       }
     "))
   ),

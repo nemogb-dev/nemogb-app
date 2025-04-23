@@ -1,0 +1,7 @@
+services:
+  app:
+    build: .
+    image: nemogb-app
+    container_name: nemogb-container
+    ports:
+      - "3838:3838"
