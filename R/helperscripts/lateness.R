@@ -19,15 +19,13 @@ edit_lateness_modal <- modalDialog(
     uiOutput("lateness_modal"),
     size = "l",
     easyClose = TRUE,
-    footer = tagList(
-        fluidRow(
-            column(2,
-                   actionButton("remove_interval", "Remove Last Interval")),
-            column(10,
-                   
-                   modalButton("Cancel"),
-                   actionButton("save_lateness", "Save", style = "color: white; background-color: #337ab7;")
-            )
+    footer = div(
+        style = "display: flex; justify-content: space-between; align-items: center;",
+        actionButton("remove_interval", "Remove Last Interval"),
+        div(
+            style = "display: flex; gap: 10px;",
+            modalButton("Cancel"),
+            actionButton("save_lateness", "Save", style = "color: white; background-color: #337ab7;")
         )
     )
 )
@@ -151,13 +149,12 @@ createLatenessCards <- function(lateness_table) {
         
         content <- do.call(tagList, content)
         
-        box(
+        bs4Card(
             #title = title,
             status = "primary",
             width = 8,
             icons,
             content
-            
         )
     })
 }
