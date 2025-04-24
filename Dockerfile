@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Set CRAN repository to use precompiled binaries
-ENV CRAN_REPO="https://packagemanager.posit.co/cran/latest"
+ENV CRAN_REPO="https://packagemanager.posit.co/cran/2025-04-22"
 
 # Create a directory to store installed R packages that we will copy later
 RUN mkdir -p /tmp/R_libs
