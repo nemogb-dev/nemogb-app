@@ -46,7 +46,7 @@ controlbar <- bs4DashControlbar(
   collapsed = TRUE
 )
 
-# Simple footer
+# Simple footer with version tooltip
 footer <- bs4DashFooter(
   fixed = FALSE,
   right = "Nemo Gradebook"
