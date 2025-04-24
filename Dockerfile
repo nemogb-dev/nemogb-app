@@ -13,6 +13,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Set CRAN repository to use precompiled binaries
 ENV CRAN_REPO="https://packagemanager.posit.co/cran/2025-04-22"
 
+# Set nemogb-r package reference
+ENV NEMOGB_PKG="nemogb-dev/nemogb-r@main"
+
 # Create a directory to store installed R packages that we will copy later
 RUN mkdir -p /tmp/R_libs
 
@@ -34,11 +37,10 @@ RUN R -e "options(repos=c(CRAN='$CRAN_REPO')); \
             # Additional packages needed for the nemogb-app
             'shinydashboard', 'markdown', 'rmarkdown', 'knitr', \
             # Additional utility packages
-            'htmltools', 'shiny' \
+            'htmltools', 'shiny', \
+            # GitHub packages
+            "$NEMOGB_PKG" \
           ), lib = '/tmp/R_libs')"
-
-# Install nemogb-r from GitHub with pak
-RUN R -e "pak::pkg_install('nemogb-dev/nemogb-r@main', lib = '/tmp/R_libs')"
 
 # Copy the application code into the builder (for later copy to final image)
 COPY R/ /tmp/app/
