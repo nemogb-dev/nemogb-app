@@ -45,4 +45,7 @@ COPY --from=builder /tmp/R_libs /usr/local/lib/R/site-library
 
 COPY --from=builder /tmp/app/ /srv/shiny-server/
 
+# Configure Shiny to listen on all interfaces (needed for GitHub Codespaces)
+RUN echo "run_as shiny;\nserver {\n  listen 3838 0.0.0.0;\n  location / {\n    app_dir /srv/shiny-server;\n    log_dir /var/log/shiny-server;\n  }\n}" > /etc/shiny-server/shiny-server.conf
+
 EXPOSE 3838
