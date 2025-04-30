@@ -5,3 +5,6 @@ services:
     container_name: nemogb-container
     ports:
       - "3838:3838"
+    volumes:
+      - ./R:/srv/shiny-server/
+      - ./www:/srv/shiny-server/www/
