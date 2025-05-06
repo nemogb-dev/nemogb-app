@@ -4,67 +4,11 @@ Policies <- bs4TabItem(tabName = "policies",
                        ### COURSE NAME ###
                        fluidRow(
                            bs4Card(
-                               tags$head(
-                                   tags$style(HTML("
-                .buttons {
-                  display: flex;
-                  align-items: baseline;
-                  flex-wrap: nowrap;
-                  justify-content: space-between;
-           
-                }
-                .title {
-                  margin-right: 4rem;       /* space between title and uploads */
-                }
-              
-                .buttons .form-group.shiny-input-container {
-                  flex: 0 0 auto;
-                  margin: 0 0.75rem 0 0; 
-                }
-              
-                  .card-header .buttons .button-group {
-                    display: flex;
-                    align-items: center;
-                 
-                  }
-
-                .buttons .download-buttons {
-                  display: flex;
-                }
-                .download-button {
-                width: 8rem;
-                }
-             
-                            "))),
+                               
                                
                                width = 12,
                                solidHeader = TRUE,
-                               title = tags$div(
-                                   class = "buttons",
-                                   
-                                   # 1) the title
-                                   tags$span("Create Policy File", class = "title"),
-                                   
-                                   # 2) two uploads (each fileInput lives in a .form-group)
-                                   fileInput("upload_gs",     label = NULL,
-                                             buttonLabel = "Upload Student Grades",
-                                             accept      = ".csv"
-                                   ),
-                                   fileInput("upload_policy", label = NULL,
-                                             buttonLabel = "Upload Policy File",
-                                             accept      = ".yml"
-                                   ),
-                                   
-                                   # 3) downloads—wrapped in a container for margin-left:auto
-                                   tags$div(
-                                       class = "download-buttons",
-                                       downloadButton("download_grades",      "Grades",
-                                                      class = "btn btn-outline-primary download-button"),
-                                       downloadButton("download_policy_file","Policy File",
-                                                      class = "btn btn-outline-primary download-button")
-                                   )
-                               ),
-                               
+                               title = 'Create Policy File',
                                headerBorder = TRUE,
                                collapsible = FALSE,
                                fluidRow(
@@ -154,6 +98,38 @@ Policies <- bs4TabItem(tabName = "policies",
                                    column(
                                        width = 12,
                                        uiOutput("slip_days_ui")
+                                   )
+                               )
+                           )
+                       ),
+                       #### ----- FOOTER BUTTONS ------###
+                       tags$div(
+                           class = "button-footer",
+                           style = "position: absolute;
+                                    bottom: 0;
+                                    left: 0;
+                                    right: 0;
+                                    padding: 1rem;
+                                    ",
+                           fluidRow(
+                               column(
+                                   width = 12,
+                                   class = "d-flex justify-content-end align-items-baseline",
+                                   fileInput(
+                                       "upload_gs", label = NULL,
+                                       buttonLabel = "Upload Student Grades", accept = ".csv"
+                                   ) %>% tagAppendAttributes(style = "margin-right:1rem; margin-bottom:0;"),
+                                   fileInput(
+                                       "upload_policy", label = NULL,
+                                       buttonLabel = "Upload Policy File", accept = ".yml"
+                                   ) %>% tagAppendAttributes(style = "margin-right:1rem; margin-bottom:0;"),
+                                   downloadButton(
+                                       "download_grades",  "Grades",
+                                       class = "btn btn-outline-primary mr-2"
+                                   ),
+                                   downloadButton(
+                                       "download_policy_file", "Policy File",
+                                       class = "btn btn-outline-primary"
                                    )
                                )
                            )
