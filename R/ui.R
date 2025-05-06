@@ -24,17 +24,6 @@ sidebar <- bs4DashSidebar(
       text = "Policies",
       tabName = "policies",
       icon = icon("file-pen")
-    ),
-    # Wrap extra controls in a div
-    tags$div(class = "sidebar-extra-content",
-      # Upload controls
-      fileInput("upload_gs", "Upload Student Data", accept = c(".csv")),
-      fileInput("upload_policy", "Upload Policy File", accept = c(".yml")),
-      # Download controls
-      tags$div(class = "download-buttons-container",
-        downloadButton("download_grades", "Grades"),
-        downloadButton("download_policy_file", "Policy File")
-      )
     )
   )
 )
@@ -68,27 +57,6 @@ body <- bs4DashBody(
         display: none;
       }
 
-      /* Styling for extra content when sidebar is EXPANDED */
-      .sidebar-extra-content {
-        padding-left: 8px;  /* Match typical sidebar padding */
-        padding-right: 8px;
-        margin-top: 10px; /* Add some space above */
-      }
-
-      .sidebar-extra-content .form-group label {
-         margin-left: 2px; /* Align label slightly */
-      }
-
-      /* Style file inputs and download buttons */
-      .sidebar-extra-content .form-group,
-      .sidebar-extra-content .btn {
-          width: 100%;          /* Make them fill available width */
-          margin-left: 0;       /* Remove previous margin */
-          margin-right: 0;      /* Remove previous margin */
-          margin-bottom: 10px;
-          box-sizing: border-box; /* Include padding/border in width */
-      }
-      
       /* Container for download buttons to ensure vertical stacking */
       .download-buttons-container {
           display: flex;
