@@ -38,7 +38,7 @@ controlbar <- bs4DashControlbar(
 # Simple footer
 footer <- bs4DashFooter(
   fixed = FALSE,
-  right = "Nemo Gradebook"
+ # right = "Nemo Gradebook"
 )
 
 body <- bs4DashBody(

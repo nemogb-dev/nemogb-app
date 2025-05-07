@@ -4,8 +4,6 @@ Policies <- bs4TabItem(tabName = "policies",
                        ### COURSE NAME ###
                        fluidRow(
                            bs4Card(
-                               
-                               
                                width = 12,
                                solidHeader = TRUE,
                                title = 'Create Policy File',
@@ -103,14 +101,29 @@ Policies <- bs4TabItem(tabName = "policies",
                            )
                        ),
                        #### ----- FOOTER BUTTONS ------###
+                       tags$head(
+                                 tags$style(HTML("
+                                    /* the fixed footer bar */
+                                    .fixed-footer {
+                                      position: fixed;
+                                      bottom: 0;
+                                      left: 12rem;
+                                      right: 0;
+                                      height: 5rem;  
+                                      background: #ffffff;
+                                      border-top: 1px solid #e1e1e1;
+                                      padding: 0.5rem 1rem;
+                                      z-index: 1000; 
+                                      display: flex;
+                                      align-items: center;
+                                      justify-content: flex-end;
+                                    }
+                                 
+                                  "))
+                               ),
+                       
                        tags$div(
-                           class = "button-footer",
-                           style = "position: absolute;
-                                    bottom: 0;
-                                    left: 0;
-                                    right: 0;
-                                    padding: 1rem;
-                                    ",
+                           class = "fixed-footer",
                            fluidRow(
                                column(
                                    width = 12,
