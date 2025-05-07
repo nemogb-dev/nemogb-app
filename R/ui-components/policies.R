@@ -118,11 +118,11 @@ Policies <- bs4TabItem(tabName = "policies",
                                    fileInput(
                                        "upload_gs", label = NULL,
                                        buttonLabel = "Upload Student Grades", accept = ".csv"
-                                   ) %>% tagAppendAttributes(style = "margin-right:1rem; margin-bottom:0;"),
+                                   ) |> tagAppendAttributes(style = "margin-right:1rem; margin-bottom:0;"),
                                    fileInput(
                                        "upload_policy", label = NULL,
                                        buttonLabel = "Upload Policy File", accept = ".yml"
-                                   ) %>% tagAppendAttributes(style = "margin-right:1rem; margin-bottom:0;"),
+                                   ) |> tagAppendAttributes(style = "margin-right:1rem; margin-bottom:0;"),
                                    downloadButton(
                                        "download_grades",  "Grades",
                                        class = "btn btn-outline-primary mr-2"
