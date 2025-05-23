@@ -20,13 +20,9 @@ edit_lateness_modal <- modalDialog(
     size = "l",
     easyClose = TRUE,
     footer = div(
-        style = "display: flex; justify-content: space-between; align-items: center;",
         actionButton("remove_interval", "Remove Last Interval"),
-        div(
-            style = "display: flex; gap: 10px;",
-            modalButton("Cancel"),
-            actionButton("save_lateness", "Save", style = "color: white; background-color: #337ab7;")
-        )
+        modalButton("Cancel"),
+        actionButton("save_lateness", "Save", style = "color: white; background-color: #337ab7;")
     )
 )
 

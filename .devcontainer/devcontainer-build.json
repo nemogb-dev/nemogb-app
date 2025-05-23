@@ -1,0 +1,28 @@
+{
+  "name": "NemoGB Shiny App (Build from Source)",
+  "image": "ghcr.io/nemogb-dev/nemogb-app:latest",
+  "workspaceFolder": "/srv/shiny-server",
+  
+  "customizations": {
+    "codespaces": {
+      "openFiles": ["R/app.R"]
+    },
+    "vscode": {
+      "settings": {
+        "r.rterm.linux": "/usr/local/bin/R",
+        "r.bracketedPaste": true,
+        "r.plot.useHttpgd": true,
+        "editor.wordWrap": "on",
+        "editor.formatOnSave": true
+      },
+      "extensions": [
+        "reditorsupport.r",
+        "REditorSupport.r-lsp"
+      ]
+    }
+  },
+  
+  "forwardPorts": [3838],
+  
+  "postCreateCommand": "echo 'Development environment is ready!'"
+}

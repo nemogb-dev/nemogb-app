@@ -1,0 +1,20 @@
+/* Primary fix for modal backdrop flash issue in bs4Dash */
+.fade:not(.show) {
+  opacity: 1 !important;
+}
+
+/* Ensure consistent backdrop opacity */
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  opacity: 0.5 !important;
+}
+
+/* Disable transitions that may cause flashing */
+.modal, .modal-backdrop, .modal-content, .modal-dialog {
+  transition: none !important;
+}
+
+/* Prevent transform animations */
+.modal.fade .modal-dialog {
+  transform: none !important;
+}

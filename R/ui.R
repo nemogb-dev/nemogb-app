@@ -1,6 +1,9 @@
 library(bs4Dash)
 library(shiny)
 
+# Include custom CSS
+addResourcePath("www", "www")
+
 # Define UI component directory and source files
 UICompDirectory <- "ui-components/"
 
@@ -46,7 +49,7 @@ controlbar <- bs4DashControlbar(
   collapsed = TRUE
 )
 
-# Simple footer
+# Simple footer with version tooltip
 footer <- bs4DashFooter(
   fixed = FALSE,
   right = "Nemo Gradebook"
@@ -124,18 +127,22 @@ body <- bs4DashBody(
   )
 )
 
+# Add custom CSS to fix modal flashing
+header <- dashboardHeader(
+  title = dashboardBrand(
+    title = "Nemo Gradebook",
+    image = 'https://m.media-amazon.com/images/I/71giHMMMxpL.jpg'
+  ),
+  controlbarIcon = NULL,
+  fixed = TRUE,
+  tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "www/custom.css"))
+)
+
 ui <- bs4DashPage(
   title = "Nemo Gradebook",
   dark = NULL,
   help = NULL,
-  header = dashboardHeader(
-    title = dashboardBrand(
-      title = "Nemo Gradebook",
-      image = 'https://m.media-amazon.com/images/I/71giHMMMxpL.jpg', 
-    ),
-    controlbarIcon = NULL,
-    fixed = TRUE
-  ),
+  header = header,
   sidebar = sidebar,
   controlbar = controlbar,
   footer = footer,
