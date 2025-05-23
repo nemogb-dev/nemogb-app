@@ -1,9 +1,8 @@
 {
-  "name": "NemoGB Shiny App",
+  "name": "NemoGB Shiny App (Build from Source)",
   "image": "ghcr.io/nemogb-dev/nemogb-app:latest",
   "workspaceFolder": "/srv/shiny-server",
   
-  // Configure tool-specific properties within customizations.
   "customizations": {
     "codespaces": {
       "openFiles": ["R/app.R"]
@@ -23,15 +22,7 @@
     }
   },
   
-  // Use 'forwardPorts' to make a list of ports inside the container available locally.
   "forwardPorts": [3838],
   
-  // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-  // "remoteUser": "root"
-  
-  // Features to add to the dev container. More info: https://containers.dev/features.
-  // "features": {},
-  
-  // Use 'postCreateCommand' to run commands after the container is created.
   "postCreateCommand": "echo 'Development environment is ready!'"
 }

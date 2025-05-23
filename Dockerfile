@@ -1,6 +1,10 @@
 # ---------- Builder Stage ----------
 FROM --platform=linux/amd64 rocker/shiny:latest AS builder
 
+LABEL org.opencontainers.image.source="https://github.com/nemogb-dev/nemogb-app"
+LABEL org.opencontainers.image.description="NemoGB Shiny Application"
+LABEL org.opencontainers.image.licenses="MIT"
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     libcurl4-openssl-dev \
@@ -40,6 +44,10 @@ COPY R/ /tmp/app/
 
 # ---------- Final Runtime Stage ----------
 FROM --platform=linux/amd64 rocker/shiny:latest
+
+LABEL org.opencontainers.image.source="https://github.com/nemogb-dev/nemogb-app"
+LABEL org.opencontainers.image.description="NemoGB Shiny Application"
+LABEL org.opencontainers.image.licenses="MIT"
 
 COPY --from=builder /tmp/R_libs /usr/local/lib/R/site-library
 

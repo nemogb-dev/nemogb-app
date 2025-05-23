@@ -1,41 +1,49 @@
-# Dev Container Configuration for NemoGB Shiny App
+# Dev Container Configuration
 
-This directory contains configuration files for GitHub Codespaces and Visual Studio Code Dev Containers.
+This project uses pre-built Docker images for fast GitHub Codespace startup.
 
-## What This Does
+## Available Configurations
 
-The `devcontainer.json` file defines a development environment that:
+### `devcontainer.json` (Default - Recommended)
+- Uses pre-built image from GitHub Container Registry
+- **Startup time**: ~30-60 seconds
+- **Best for**: Regular development work
 
-1. Uses your existing Docker Compose setup
-2. Automatically forwards port 3838 for the Shiny app
-3. Installs R language extensions
-4. Configures VS Code settings for R development
-5. Opens the main app file when you start a new Codespace
+### `devcontainer-build.json` (Alternative)
+- Uses pre-built image with build context
+- **Startup time**: ~30-60 seconds  
+- **Best for**: Testing latest changes
 
-## Benefits
+### `devcontainer-local.json` (Fallback)
+- Builds from local Dockerfile
+- **Startup time**: ~5-10 minutes
+- **Best for**: Emergency use if pre-built image unavailable
 
-- **Faster Startup**: When using GitHub Codespaces with prebuilds enabled, your environment will be pre-configured
-- **Consistent Environment**: Everyone gets the same development setup
-- **Automatic Configuration**: Port forwarding and extensions are pre-configured
-- **Better Integration**: Native support for GitHub Codespaces workflow
+## Image Building
 
-## Using with GitHub Codespaces
+Docker images are automatically built and pushed to GitHub Container Registry:
+- **Trigger**: Push to main branch, weekly schedule, manual dispatch
+- **Registry**: `ghcr.io/nemogb-dev/nemogb-app:latest`
+- **Workflow**: `.github/workflows/docker-build.yml`
 
-1. In your GitHub repository, go to the "Codespaces" tab
-2. Click "New codespace"
-3. The environment will be automatically configured based on this setup
+## Quick Start
 
-## Using with VS Code Dev Containers
+1. Create Codespace using default configuration
+2. Wait ~30-60 seconds for container startup
+3. Start developing immediately
 
-1. Install the "Remote - Containers" extension in VS Code
-2. Open the project folder in VS Code
-3. Click the green button in the bottom-left corner
-4. Select "Reopen in Container"
+## Troubleshooting
 
-## Enabling Prebuilds (GitHub Admin)
+If Codespace fails to start:
+1. Check if image build is successful in GitHub Actions
+2. Use `devcontainer-local.json` as fallback option
+3. Manually trigger image rebuild via GitHub Actions
 
-1. Go to your repository on GitHub
-2. Navigate to Settings > Codespaces
-3. Under "Prebuild configuration", click "Add prebuild configuration"
-4. Select the branches you want to enable prebuilds for
-5. Configure the prebuild options and save
+## Local Development
+
+For local development, continue using:
+```bash
+docker-compose up
+```
+
+This maintains volume mounts for live code editing.
